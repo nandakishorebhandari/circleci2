@@ -44,7 +44,7 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Staging
-          command: ./kubectl version
+          command: ls -al
           
   deploy-prod:
     docker:
