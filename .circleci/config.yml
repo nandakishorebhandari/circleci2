@@ -39,7 +39,7 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ansible-playbook site.yml
+              echo $CIRCLE_BRANCH hey
             fi
 
   deploy-master:
