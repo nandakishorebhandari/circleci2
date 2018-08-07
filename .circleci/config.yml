@@ -20,11 +20,6 @@ jobs:
             curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
             npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
             npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
-      - setup_remote_docker:  
-          docker_layer_caching: true      
-      - run:
-          name: Docker  Config
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_ADDRESS
       - run:
           name: Install Dependencies
           command: |
@@ -41,50 +36,40 @@ jobs:
           command: |
             # - mkdir -p $CIRCLE_ARTIFACTS/coverage
             # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
+
+  deploy:
+    docker:
+      - image: circleci/node:6
+    working_directory: /tmp/my-project  
+    steps:
+      - setup_remote_docker:  
+          docker_layer_caching: true      
+      - run:
+          name:  Build Docker Image
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_ADDRESS
       - run:
           name: Decrypt kubectl admin key 
           environment:
             # Convert branch name to caps to
             ENV_KEY_PASS: '${CIRCLE_BRANCH^^}_KEY_PASS'
           command: openssl aes-256-cbc -a -d -in deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem.aes256 -pass pass:$ENV_KEY_PASS > deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem      
-      - deploy:
+      - run:
           command: |
             curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo $CIRCLE_BRANCH hey
             fi
-
-  deploy-master:
-    docker:
-      - image: circleci/node:6
-    working_directory: /tmp/my-project  
-    steps:
-      - run:
-          name: Deploy if tests pass and branch is Staging
-          command: |
-            curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
-            ./kubectl VERSION
-          
-  deploy-prod:
-    docker:
-      - image: circleci/node:6
-    working_directory: /tmp/my-project  
-    steps:
-      - run:
-          name: Deploy if tests pass and branch is Master
-          command: echo $CIRCLE_BRANCH
-
-# workflows:
-#   version: 2
-#   build-deploy:
-#     jobs:
-#       - build
-#       - deploy-master:
-#           requires:
-#             - build
-#           filters:
-#             branches:
-#               only: master
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy-master:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 #       - deploy-qa:
 #           requires:
 #             - build
