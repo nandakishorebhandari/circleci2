@@ -36,7 +36,6 @@ jobs:
           command: |
             # - mkdir -p $CIRCLE_ARTIFACTS/coverage
             # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
-
   deploy:
     docker:
       - image: circleci/node:6
@@ -64,7 +63,7 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - deploy-master:
+      - deploy:
           requires:
             - build
           filters:
