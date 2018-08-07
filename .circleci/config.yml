@@ -4,9 +4,9 @@ jobs:
     docker:
       - image: circleci/node:6
     environment:
-      SERVICE_NAME: member
-      IMAGE_NAME: frontend-member
-      DOCKER_ADDRESS: ns1ghter-docker.jfrog.io
+      SERVICE_NAME: 'member'
+      IMAGE_NAME: 'frontend-member'
+      DOCKER_ADDRESS: 'ns1ghter-docker.jfrog.io'
       DOCKER_EMAIL: 'build@ns1ghter.com'
       DOCKER_USER : 'nandab'
       DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
@@ -44,7 +44,7 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Staging
-          command: echo $CIRCLE_BRANCH
+          command: kubectl get po
           
   deploy-prod:
     docker:
