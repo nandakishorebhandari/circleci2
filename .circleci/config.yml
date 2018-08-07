@@ -10,14 +10,8 @@ jobs:
 
     steps:
       - checkout
-
-      - run:
-          command: echo 127.0.0.1 devhost | sudo tee -a /etc/hosts
-
-      # Create Postgres users and database
-      # Note the YAML heredoc '|' for nicer formatting
       - run: |
-          echo $TEST_REPORTS
+          echo $TEST_REPORTS ${CIRCLE_BRANCH}
   deploy-stage:
     docker:
       - image: circleci/node:6
@@ -25,7 +19,7 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Staging
-          command: echo $BRANCH          
+          command: echo ${CIRCLE_BRANCH}          
           
   deploy-prod:
     docker:
@@ -34,22 +28,40 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Master
-          command: echo $BRANCH
+          command: echo ${CIRCLE_BRANCH}
 
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build
-      - deploy-stage:
+      - deploy-master:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-qa:
           requires:
             - build
           filters:
             branches:
               only: test
+      - deploy-stag:
+          requires:
+            - build
+          filters:
+            branches:
+              only: staging       
+      - deploy-prod-dr:
+          requires:
+            - build
+          filters:
+            branches:
+              only: production-dr
       - deploy-prod:
           requires:
             - build
           filters:
             branches:
-              only: master       
+              only: production                     
