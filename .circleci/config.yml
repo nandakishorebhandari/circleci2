@@ -3,7 +3,7 @@ jobs:
   build:
     filters:
       branches:
-        only: master
+        only: test
     docker:
         - image: circleci/node:6
     steps:
