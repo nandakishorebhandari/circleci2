@@ -1,19 +1,19 @@
 version: 2.0
 jobs:
-build:
-  filters:
-    branches:
-      only: master
-  docker:
-     - image: circleci/node:6.3.1
-   steps:
-     - checkout
-     - run:
-         name: Code Has Arrived
-         command: |
-           ls -al
-           echo $KEY_PASS
-     - run:
-         name: Running in a Unique Container
-         command: |
-           node -v
+  build:
+    filters:
+      branches:
+        only: master
+    docker:
+        - image: circleci/node:6.3.1
+    steps:
+      - checkout
+      - run:
+          name: Code Has Arrived
+          command: |
+            ls -al
+            echo $KEY_PASS
+      - run:
+          name: Running in a Unique Container
+          command: |
+            node -v
