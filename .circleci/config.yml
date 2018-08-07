@@ -24,7 +24,6 @@ jobs:
           name: Install Dependencies
           command: |
             npm install
-            curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
       - run:
           name: Unit Tests
           command: |
@@ -37,6 +36,12 @@ jobs:
           command: |
             # - mkdir -p $CIRCLE_ARTIFACTS/coverage
             # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ansible-playbook site.yml
+            fi
+
   deploy-master:
     docker:
       - image: circleci/node:6
@@ -44,7 +49,9 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Staging
-          command: ls -al
+          command: |
+            curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
+            ./kubectl VERSION
           
   deploy-prod:
     docker:
@@ -55,38 +62,38 @@ jobs:
           name: Deploy if tests pass and branch is Master
           command: echo $CIRCLE_BRANCH
 
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build
-      - deploy-master:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - deploy-qa:
-          requires:
-            - build
-          filters:
-            branches:
-              only: test
-      - deploy-stag:
-          requires:
-            - build
-          filters:
-            branches:
-              only: staging       
-      - deploy-prod-dr:
-          requires:
-            - build
-          filters:
-            branches:
-              only: production-dr
-      - deploy-prod:
-          requires:
-            - build
-          filters:
-            branches:
-              only: production                     
+# workflows:
+#   version: 2
+#   build-deploy:
+#     jobs:
+#       - build
+#       - deploy-master:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: master
+#       - deploy-qa:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: test
+#       - deploy-stag:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: staging       
+#       - deploy-prod-dr:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: production-dr
+#       - deploy-prod:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: production                     
