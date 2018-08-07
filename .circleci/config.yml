@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:6.3.1
+      - image: circleci/node:6
     environment:
       TEST_REPORTS: /tmp/test-reports
 
@@ -20,7 +20,7 @@ jobs:
           sudo $TEST_REPORTS
   deploy-stage:
     docker:
-      - image: circleci/node:6.3.1
+      - image: circleci/node:6
     working_directory: /tmp/my-project  
     steps:
       - run:
@@ -29,7 +29,7 @@ jobs:
           
   deploy-prod:
     docker:
-      - image: circleci/node:6.3.1
+      - image: circleci/node:6
     working_directory: /tmp/my-project  
     steps:
       - run:
