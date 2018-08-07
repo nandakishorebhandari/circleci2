@@ -1,12 +1,17 @@
 version: 2.0
 jobs:
  build:
+   # pre-built images: https://circleci.com/docs/2.0/circleci-images/
    docker:
-     - image: alpine:3.7
+     - image: circleci/node:6-browsers
    steps:
+     - checkout
      - run:
-         name: The First Step
+         name: Code Has Arrived
          command: |
-           echo 'Hello World!'
+           ls -al
            echo $KEY_PASS
-           echo 'This is the delivery pipessline'
+     - run:
+         name: Running in a Unique Container
+         command: |
+           node -v
