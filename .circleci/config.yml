@@ -20,6 +20,7 @@ jobs:
             curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
             npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
             npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
+            docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_ADDRESS
       - run:
           name: Install Dependencies
           command: |
@@ -30,14 +31,21 @@ jobs:
             # - npm run lint
             # - npm run flow
             # - npm run test
-            echo $CIRCLE_BRANCH testing
+            echo $CIRCLE_BRANCH ${CIRCLE_BRANCH^^}_KEY_PASS 
       - run:
           name: Store Test Coverage
           command: |
             # - mkdir -p $CIRCLE_ARTIFACTS/coverage
             # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
+      - run:
+          name: Decrypt kubectl admin key 
+          environment:
+            # Convert branch name to caps to
+            ENV_KEY_PASS: '${CIRCLE_BRANCH^^}_KEY_PASS'
+          command: openssl aes-256-cbc -a -d -in deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem.aes256 -pass pass:$ENV_KEY_PASS > deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem      
       - deploy:
           command: |
+            curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo $CIRCLE_BRANCH hey
             fi
