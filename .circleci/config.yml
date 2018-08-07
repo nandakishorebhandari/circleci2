@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          echo $TEST_REPORTS ${CIRCLE_BRANCH}
+          echo $TEST_REPORTS $CIRCLE_BRANCH
   deploy-stage:
     docker:
       - image: circleci/node:6
@@ -19,7 +19,7 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Staging
-          command: echo ${CIRCLE_BRANCH}          
+          command: echo $CIRCLE_BRANCH
           
   deploy-prod:
     docker:
@@ -28,7 +28,7 @@ jobs:
     steps:
       - run:
           name: Deploy if tests pass and branch is Master
-          command: echo ${CIRCLE_BRANCH}
+          command: echo $CIRCLE_BRANCH
 
 workflows:
   version: 2
