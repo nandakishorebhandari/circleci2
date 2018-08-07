@@ -14,13 +14,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Docker & NPM Config
+          name: NPM Config
           command: |
             curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/auth > ~/.npmrc
             curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
             npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
             npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
-            docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_ADDRESS
+      - setup_remote_docker:  
+          docker_layer_caching: true      
+      - run:
+          name: Docker  Config
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_ADDRESS
       - run:
           name: Install Dependencies
           command: |
