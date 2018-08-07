@@ -31,7 +31,6 @@ jobs:
             # - npm run lint
             # - npm run flow
             # - npm run test
-            ./kubectl version
             echo $CIRCLE_BRANCH testing
       - run:
           name: Store Test Coverage
