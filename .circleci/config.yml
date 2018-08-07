@@ -4,14 +4,39 @@ jobs:
     docker:
       - image: circleci/node:6
     environment:
-      TEST_REPORTS: /tmp/test-reports
-
+      SERVICE_NAME: member
+      IMAGE_NAME: frontend-member
+      DOCKER_ADDRESS: ns1ghter-docker.jfrog.io
+      DOCKER_EMAIL: 'build@ns1ghter.com'
+      DOCKER_USER : 'nandab'
+      DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
     working_directory: ~/my-project
-
     steps:
       - checkout
-      - run: |
-          echo $TEST_REPORTS $CIRCLE_BRANCH
+      - run:
+          name: Docker & NPM Config
+          command: |
+            - curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/auth > ~/.npmrc
+            - curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
+            - npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
+            - npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
+      - run:
+          name: Install Dependencies
+          command: |
+            - npm install
+            - curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
+      - run:
+          name: Unit Tests
+          command: |
+            # - npm run lint
+            # - npm run flow
+            # - npm run test
+            - echo $CIRCLE_BRANCH testing
+      - run:
+          name: Store Test Coverage
+          command: |
+            # - mkdir -p $CIRCLE_ARTIFACTS/coverage
+            # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
   deploy-master:
     docker:
       - image: circleci/node:6
