@@ -17,7 +17,7 @@ jobs:
       # Create Postgres users and database
       # Note the YAML heredoc '|' for nicer formatting
       - run: |
-          sudo $TEST_REPORTS
+          echo $TEST_REPORTS
   deploy-stage:
     docker:
       - image: circleci/node:6
