@@ -3,13 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/node:6
-    environment:
-      SERVICE_NAME: 'member'
-      IMAGE_NAME: 'frontend-member'
-      DOCKER_ADDRESS: 'ns1ghter-docker.jfrog.io'
-      DOCKER_EMAIL: 'build@ns1ghter.com'
-      DOCKER_USER : 'nandab'
-      DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
     working_directory: ~/my-project
     steps:
       - checkout
@@ -39,6 +32,13 @@ jobs:
   deploy:
     docker:
       - image: circleci/node:6
+    environment:
+      SERVICE_NAME: 'member'
+      IMAGE_NAME: 'frontend-member'
+      DOCKER_ADDRESS: 'ns1ghter-docker.jfrog.io'
+      DOCKER_EMAIL: 'build@ns1ghter.com'
+      DOCKER_USER : 'nandab'
+      DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
     working_directory: /tmp/my-project  
     steps:
       - setup_remote_docker:  
