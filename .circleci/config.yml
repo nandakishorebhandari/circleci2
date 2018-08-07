@@ -16,22 +16,22 @@ jobs:
       - run:
           name: Docker & NPM Config
           command: |
-            - curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/auth > ~/.npmrc
-            - curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
-            - npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
-            - npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
+            curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/auth > ~/.npmrc
+            curl -u$DOCKER_USER:$DOCKER_PASS https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm/auth/frontend >> ~/.npmrc
+            npm config set registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
+            npm config set @frontend:registry https://ns1ghter.jfrog.io/ns1ghter/api/npm/npm
       - run:
           name: Install Dependencies
           command: |
-            - npm install
-            - curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
+            npm install
+            curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
       - run:
           name: Unit Tests
           command: |
             # - npm run lint
             # - npm run flow
             # - npm run test
-            - echo $CIRCLE_BRANCH testing
+            echo $CIRCLE_BRANCH testing
       - run:
           name: Store Test Coverage
           command: |
