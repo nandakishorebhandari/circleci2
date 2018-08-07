@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run: |
           echo $TEST_REPORTS $CIRCLE_BRANCH
-  deploy-stage:
+  deploy-master:
     docker:
       - image: circleci/node:6
     working_directory: /tmp/my-project  
