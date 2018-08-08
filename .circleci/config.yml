@@ -50,7 +50,8 @@ jobs:
             # Convert branch name to caps to
             ENV_KEY_PASS: '${CIRCLE_BRANCH^^}_KEY_PASS'
           command: openssl aes-256-cbc -a -d -in deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem.aes256 -pass pass:$ENV_KEY_PASS > deployment/${CIRCLE_BRANCH}/credentials/admin-key.pem      
-      - run:
+      - deploy:
+          name: Deploy in kubernates cluster
           command: |
             curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && chmod +x kubectl
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
