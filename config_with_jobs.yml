@@ -1,18 +1,8 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - master
     docker:
       - image: circleci/node:6
-    environment:
-      SERVICE_NAME: 'member'
-      IMAGE_NAME: 'frontend-member'
-      DOCKER_ADDRESS: 'ns1ghter-docker.jfrog.io'
-      DOCKER_EMAIL: 'build@ns1ghter.com'
-      DOCKER_USER : 'nandab'
-      DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
     working_directory: ~/my-project
     steps:
       - checkout
@@ -35,6 +25,17 @@ jobs:
             # - npm run test
             echo $CIRCLE_BRANCH ${CIRCLE_BRANCH^^}_KEY_PASS 
       - run:
+          name: Store Test Coverage
+          command: |
+            # - mkdir -p $CIRCLE_ARTIFACTS/coverage
+            # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report
+  test:
+    docker:
+      - image: circleci/node:6
+    working_directory: /tmp/my-project
+    steps:
+      - checkout
+      - run:
           name: Unit Tests
           command: |
             # - npm run lint
@@ -45,7 +46,19 @@ jobs:
           name: Store Test Coverage
           command: |
             # - mkdir -p $CIRCLE_ARTIFACTS/coverage
-            # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report       
+            # - mv coverage/lcov-report $CIRCLE_ARTIFACTS/coverage/lcov-report           
+  deploy:
+    docker:
+      - image: circleci/node:6
+    environment:
+      SERVICE_NAME: 'member'
+      IMAGE_NAME: 'frontend-member'
+      DOCKER_ADDRESS: 'ns1ghter-docker.jfrog.io'
+      DOCKER_EMAIL: 'build@ns1ghter.com'
+      DOCKER_USER : 'nandab'
+      DOCKER_PASS : 'z%9e^pAYvwi4C2d1'
+    working_directory: /tmp/my-project  
+    steps:
       - setup_remote_docker:  
           docker_layer_caching: true      
       - run:
@@ -63,17 +76,17 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo $CIRCLE_BRANCH hey
             fi
-# workflows:
-#   version: 2
-#   build-deploy:
-#     jobs:
-#       - build
-#       - deploy:
-#           requires:
-#             - build
-#           filters:
-#             branches:
-#               only: master
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 #       - deploy-qa:
 #           requires:
 #             - build
